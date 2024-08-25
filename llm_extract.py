@@ -10,13 +10,13 @@ llm = Llama(
     n_gpu_layers=0
 )
 
-def get_LLM_response(message):
+def get_LLM_response(message: str):
     prompt = f"""
     Q: 請根據提供的內容，找出詳細的時間、地點、會議目的，並以給定格式輸出。請確保：
     1. 格式為json格式。
     2. 時間應保持相對時間的形式，並將它轉換成英文與24小時制。
     3. 只需要輸出格式以及他的答案就好。
-    4. 如果有多個時間，請全部列出在"time"，並將每個時間以開始時間、結束時間的形式呈現，請注意，如果只有一個時間，則列出來的開始時間與結束時間應相同。
+    4. 請提取出文字內的所有時間，並全部放在"time"的list內，且每個時間應包含開始時間與結束時間。如果文字中只有一個時間，請將開始與結束時間設置為相同。確保日期和時間以"開始日期 開始時間"和"結束日期 結束時間"的形式列出。
     以下為給定的格式：
     {{ "time" : ["開始日期 開始時間", "結束日期 結束時間"], "location" : ["請在這裡輸入地點"], "purpose" : ["請在這裡輸入目的"] }}
     這是需要解析的內容：
@@ -38,12 +38,18 @@ def get_LLM_response(message):
     match_text = re.search(r'\rA:\s*(\{.*?\})', result)
     match_text = match_text.group(1)
     answer = match_text.replace("\rA:", "")
-    #print("match_text", match_text)
+    # 使用正則表達式找到所有的 "time" 部分並將它們提取出來
+    time_matches = re.findall(r'"time" : (\[.*?\])', answer)
+    # 將所有的時間範圍合併成一個列表
+    combined_times = '[' + ', '.join(time_matches) + ']'
+
+    time_matches = re.findall(r'"time"\s*:\s*(\[[^\]]*\])', answer)
+    combined_times = '[' + ', '.join(time_matches) + ']'
+    answer = re.sub(r'"time"\s*:\s*\[[^\]]*\]\s*,?', '', answer)
+    answer = '{ "time" : ' + combined_times + ',' + answer.lstrip('{').rstrip(' }') + ' }'
     print("answer:",answer, "\n")
     answer = json.loads(answer)
-    times_list = answer['time']
-    print("times_list:",times_list)
+    print(type(answer["purpose"]))
+    print(answer["purpose"][0])
     
     return answer
-
-print(get_LLM_response("會議時間是明天下午2點到4點以及後天早上8點，地點在台北市信義區，目的是討論公司業務。"))
