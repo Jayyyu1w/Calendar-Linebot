@@ -1,9 +1,9 @@
 # Calendar-Linebot
 
-## Overview👁️
+## 👁️Overview
 This is Linebot to extract event from message and add to google calendar, using flask to build local server, ngrok service to build line webhook URL and llama-cpp-python to run LLM locally
 
-## Installation📖
+## 📖Installation
 - To run this project locally, follow this steps:
 1. Clone the repository of this project by excuting the following command
 ```bash
@@ -20,7 +20,9 @@ pip install -r requirements.txt
 
 3. Install [ngrok](https://ngrok.com/)
 
-## Usage🧰
+4. Login [Line Developers](https://account.line.biz/login?redirectUri=https%3A%2F%2Fdevelopers.line.biz%2Fconsole%2F)
+
+## 🧰Usage
 - Add lineapi.txt and put Channel access token in first line, Channel secret in second line.
 
 - Add model and paste model path to llm_extract.py
@@ -34,3 +36,7 @@ python server.py
 ```
 ngrok http <your local server URL>
 ```
+
+- Put ngrok URL to linebot
+
+- All done🤗
