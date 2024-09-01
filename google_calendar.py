@@ -16,10 +16,10 @@ class Google_Calendar:
         self.creds = None
         self.service = None
         self.service = None
-        self.get_creds()
-        self.get_service()
+        self.set_creds()
+        self.set_service()
     
-    def get_creds(self):
+    def set_creds(self):
         if os.path.exists("token.json"):
             self.creds = Credentials.from_authorized_user_file("token.json", SCOPES)
         if not self.creds or not self.creds.valid:
@@ -33,7 +33,7 @@ class Google_Calendar:
             with open("token.json", "w") as token:
                 token.write(self.creds.to_json())
     
-    def get_service(self):
+    def set_service(self):
         self.service = build("calendar", "v3", credentials=self.creds)
 
     def convert_time_to_rfc3339(self, date_time_str):
